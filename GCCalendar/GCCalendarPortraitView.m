@@ -25,7 +25,7 @@
 
 @implementation GCCalendarPortraitView
 
-@synthesize date, dayView, hasAddButton;
+@synthesize date, dayView, hasAddButton, hasDayPicker;
 
 #pragma mark create and destroy view
 - (id)init {
@@ -122,20 +122,23 @@
 		self.date = [NSDate date];
 	}
 	
-	// setup day picker
-	dayPicker = [[GCDatePickerControl alloc] init];
-	dayPicker.frame = CGRectMake(0, 0, self.view.frame.size.width, 0);
-	dayPicker.autoresizingMask = UIViewAutoresizingNone;
-	dayPicker.date = date;
-	[dayPicker addTarget:self action:@selector(datePickerDidChangeDate:) forControlEvents:UIControlEventValueChanged];
-	[self.view addSubview:dayPicker];
+    if ( self.hasDayPicker )
+    {
+        // setup day picker
+        dayPicker = [[GCDatePickerControl alloc] init];
+        dayPicker.frame = CGRectMake(0, 0, self.view.frame.size.width, 0);
+        dayPicker.autoresizingMask = UIViewAutoresizingNone;
+        dayPicker.date = date;
+        [dayPicker addTarget:self action:@selector(datePickerDidChangeDate:) forControlEvents:UIControlEventValueChanged];
+        [self.view addSubview:dayPicker];        
+    }
 	
 	// setup initial day view
 	dayView = [[GCCalendarDayView alloc] initWithCalendarView:self];
 	dayView.frame = CGRectMake(0,
-							   dayPicker.frame.size.height,
+							   ( self.hasDayPicker ? dayPicker.frame.size.height : 0.0f ),
 							   self.view.frame.size.width,
-							   self.view.frame.size.height - dayPicker.frame.size.height);
+							   self.view.frame.size.height - ( self.hasDayPicker ? dayPicker.frame.size.height : 0.0f ));
 	dayView.autoresizingMask = (UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth);
 	[self.view addSubview:dayView];
 	

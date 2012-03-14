@@ -45,8 +45,12 @@
 	
 	// add button
 	BOOL hasAddButton;
+    
+    // date picker header view
+    BOOL hasDayPicker;
 }
 
 @property (nonatomic, assign) BOOL hasAddButton;
+@property (nonatomic, assign) BOOL hasDayPicker;
 
 @end
