@@ -19,4 +19,5 @@
 @protocol GCCalendarDelegate <NSObject>
 - (void)calendarTileTouchedInView:(GCCalendarView *)view withEvent:(GCCalendarEvent *)event;
 - (void)calendarViewAddButtonPressed:(GCCalendarView *)view;
+- (void)dateDidChange:(NSDate *)date;
 @end

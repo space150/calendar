@@ -17,15 +17,23 @@
 #define kAnimationDuration 0.3f
 
 @interface GCCalendarPortraitView ()
+
 @property (nonatomic, retain) NSDate *date;
 @property (nonatomic, retain) GCCalendarDayView *dayView;
 
+- (void)today;
 - (void)reloadDayAnimated:(BOOL)animated context:(void *)context;
+
 @end
 
 @implementation GCCalendarPortraitView
 
 @synthesize date, dayView, hasAddButton, hasDayPicker;
+
+- (void)reloadData
+{
+    [self.dayView reloadData];
+}
 
 #pragma mark create and destroy view
 - (id)init {
@@ -35,6 +43,7 @@
 		
 		viewDirty = YES;
 		viewVisible = NO;
+        self.hasDayPicker = YES;
 		
 		[[NSNotificationCenter defaultCenter] addObserver:self 
 												 selector:@selector(calendarTileTouch:)
@@ -72,25 +81,26 @@
 
 #pragma mark GCDatePickerControl actions
 - (void)datePickerDidChangeDate:(GCDatePickerControl *)picker {
+
 	NSTimeInterval interval = [date timeIntervalSinceDate:picker.date];
 	
-	self.date = picker.date;
-	
+	self.date = picker.date;	
 	[[NSUserDefaults standardUserDefaults] setObject:date forKey:@"GCCalendarDate"];
 	
 	[self reloadDayAnimated:YES context:[NSNumber numberWithInt:interval]];
 }
 
 #pragma mark button actions
+
 - (void)today {
 	dayPicker.date = [NSDate date];
 	
 	self.date = dayPicker.date;
-	
 	[[NSUserDefaults standardUserDefaults] setObject:date forKey:@"GCCalendarDate"];
 	
 	[self reloadDayAnimated:NO context:NULL];
 }
+
 - (void)add {
 	if (delegate != nil) {
 		[delegate calendarViewAddButtonPressed:self];
@@ -152,6 +162,10 @@
 }
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
+    
+    CGRect f = dayPicker.frame;
+    f.size.width = dayView.frame.size.width;
+    dayPicker.frame = f;
 	
 	if (viewDirty) {
 		[self reloadDayAnimated:NO context:NULL];
@@ -173,7 +187,7 @@
 		
 		// block user interaction
 		dayPicker.userInteractionEnabled = NO;
-		
+
 		// setup next day view
 		GCCalendarDayView *nextDayView = [[GCCalendarDayView alloc] initWithCalendarView:self];
 		CGRect initialFrame = dayView.frame;
@@ -232,6 +246,10 @@
 	
 	// reset pickers
 	dayPicker.userInteractionEnabled = YES;
+    
+    if (delegate != nil) {
+        [delegate dateDidChange:self.date];
+    }
 }
 
 @end

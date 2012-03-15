@@ -53,4 +53,6 @@
 @property (nonatomic, assign) BOOL hasAddButton;
 @property (nonatomic, assign) BOOL hasDayPicker;
 
+- (void)reloadData;
+
 @end
